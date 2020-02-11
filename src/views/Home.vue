@@ -1,18 +1,31 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <!--头部-->
+    <top></top>
+    <!--变化的部分-->
+    <router-view></router-view>
+    <!--底部-->
+    <font></font>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import top from '../components/home/Top'
+import font from '../components/home/Font'
 export default {
-  name: 'home',
+  data() {
+    return {};
+  },
   components: {
-    HelloWorld
-  }
-}
+    font,
+    top
+  },
+  methods: {},
+  mounted() {},
+  watch: {},
+  computed: {}
+};
 </script>
+
+<style scoped lang='scss'>
+</style>

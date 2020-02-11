@@ -1,209 +1,194 @@
 import service from "./index"
 
 export default {
+    //首页数据
+    // ``` js
+    // http://localhost:9999/goods/home
+    getApp() {
+        return service.req('/goods/home')
+    },
+    //     ### 为你推荐
 
-    /**
-     * 商品详情页面(Details)所有接口
-     * goodOne          请求单个商品详情,        参数： id:商品的id,page: 商品评论的页码
-     * collection       收藏单个商品            参数：  goods:商品的详情信息
-     * cancelCollection 取消收藏单个商品        参数：  id:商品的cid
-     * isCollection     查询商品是否已收藏      参数：  id:商品的id
-     * addShop          加入购物车             参数：  id:商品的id
-     */
-    goodOne({ id, page = 1 }) {
-        return service.req(`/goods/one?id=${id}&page=${page}`)
-    },
-
-    collection(goods) {
-        return service.req('/collection', goods)
-    },
-
-    cancelCollection(id) {
-        return service.req('/cancelCollection', { id })
-    },
-
-    isCollection(id) {
-        return service.req(`/isCollection`, { id })
-    },
-
-    addShop(id) {
-        return service.req(`/addShop`, { id })
-    },
-    /**
-     * 会员中心(My)所有接口
-     * loginOut 退出登录
-     * user     获取用户信息
-     * saveUser 修改保存用户信息(gender,email,year,month,day,id,nickname)
-     * getOrderNum 查询用户订单数量
-     * comment  商品评论(id,rate,content, anonymous(是否匿名), _id, order_id, image=[])
-     */
-    loginOut() {
-        return service.req(`/loginOut`)
-    },
-
-    user() {
-        return service.post(`/queryUser`)
-    },
-
-    saveUser({...args }) {
-        return service.post(`/saveUser`, {...args })
-    },
-    getOrderNum() {
-        return service.req(`/myOrder/orderNum`)
-    },
-
-    comment({...args }) {
-        return service.post(`/goodsOne/comment`, args)
-    },
-    //购物车支付页面(ShoppingPayMent)所有接口
-    //placeOrder 提交订单 参数：address:收货地址,tel:电话，orderId：所有商品的id，totalPrice：总价格,idDirect:用来判断是购物车结算还是直接购买,count:商品数量
-    placeOrder({...args }) {
-        return service.post('/order', args)
-    },
-
-    //分类
-    category(id) {
-        return service.req(`/classification?mallSubId=${id}`)
-    },
-    //详情
-    getGoodOne(id, page = 1) {
-        return service.req(`/goods/one?id=${id}&page=${page}`)
-    },
-
-    /**
-     * 购物车(ShoppingCart)所有接口
-     * getCard      查询获取购物车数据
-     * editCart     购物车加减商品      参数 ： 数量  商品id 价格
-     * deleteShop   购物车商品删除      参数 id：需要删除的商品cid
-     */
-    getCard() {
-        return service.req(`/getCard`, {})
-    },
-
-    editCart(count, id, mallPrice) {
-        return service.req('/editCart', {
-            count,
-            id,
-            mallPrice
-        })
-    },
-
-    deleteShop(id) {
-        return service.req('/deleteShop', { _id: id })
-    },
-
-
-
-    //首页的所有数据
+    // ``` js
+    // http://localhost:9999/goods/recommend
     getRecommend() {
-        return service.req('/recommend')
+        return service.req('/goods/recommend')
     },
-    //首页的请求
-    getSearch({ value, page = 1 }) {
-        return service.req('/search', {
-            value,
-            page
+
+    // 所有商品
+    // ``` js
+    // http://localhost:9999/goods/allGoods
+    // 请求方式: get
+    // 参数: 
+    // 1.page: 请求页数(必填)
+    // 2.size: 请求条数(必填)
+    // 3.sort: 排序方式 1为升序 -1为降序
+    // 4.priceGt: 价格区间 从多少开始
+    // 5.priceLte: 价格区间 到哪结束
+
+    Allgoods(page = 1, size = 20, sort, priceGt, priceLte) {
+        return service.get(`/goods/allGoods`, { params: { page, size, sort, priceGt, priceLte } })
+    },
+
+
+
+    // ### 搜索商品
+
+    // ``` js
+    // http://localhost:9999/goods/search
+    // 请求方式: get
+    // 参数:
+    // keyword: 关键字
+    // ```
+    search(keyword) {
+        return service.get('/goods/search', { params: { keyword } })
+    },
+    // ### 商品详情
+
+    // ``` js
+    // http://localhost:9999/goods/search
+    // 请求方式:get
+    // 参数:
+    // productId: 商品id
+    // ```
+    searchId(productId) {
+        return service.get('/goods/search', { params: { productId } })
+    },
+
+
+    // ### 登陆
+
+    // ``` js
+    // http://localhost:9999/users/login
+    // 请求方式: post
+    // 参数:
+    // username: 用户名
+    // password: 密码
+    // ```
+    login(username, password) {
+        return service.post('/users/login', {
+            username,
+            password
         })
     },
-    //验证码
-    getCode() {
-        return service.req('/verify')
-    },
+    // ### 注册
 
-
-    // ===============================================================================================================
-    /**
-     * 用户相关(user文件夹下)所有接口
-     * getAverify           获取登录注册默认验证码
-     * replaceVerify        更换验证码
-     * getAddress           查询用户收货地址 
-     * getDefaultAddress    查询默认收货地址
-     * setDefaultAddress    设置默认收货地址    参数：id：地址id
-     * postAddress          增加收货地址        参数：name:用户名,tel:电话，address:(省+市+区+详情地址)，isDefault：是否默认
-     *                                province：省，city：市，county：区，addressDetail：详情地址，
-     *                                areaCode：地区代码，id：修改地址时候要传id
-     * deleteAddress        删除地址            参数： id：地址_id
-     * getCollection        查询我的收藏    参数：page，页码，默认第一页
-     * register             注册            参数：nickname，用户名 password：密码，verify:验证码
-     * login                登录
-     * codeMsg              短信验证码      参数： sms 4位验证码
-     * getMyOrder           订单查询        参数：evaluate：用来判断是不是查询订单，默认false
-     * alreadyEvaluated     查询已评价      参数： page：页面
-     * tobeEvaluated        查询待评价      参数： page：页面
-     * evaluateOne          查询单条评论    参数： id：商品id，_id：数据库的那条id
-     */
-    // getAverify() {
-    //     return process.env.NODE_ENV === 'production' ? `/v1/verify?mt=${Math.random()}` : `/api/v1/verify?mt=${Math.random()}`
-    // }
-
-    getAddress() {
-        return service.req(`/getAddress`)
-    },
-
-    getDefaultAddress() {
-        return service.req(`/getDefaultAddress`)
-    },
-
-    setDefaultAddress(id) {
-        return service.req(`/setDefaultAddress`, { id })
-    },
-
-    postAddress({...args }) {
-        return service.post(`/address`, args)
-    },
-
-    deleteAddress(id) {
-        return service.req('/deleteAddress', {
-            id
+    // ``` js
+    // http://localhost:9999/users/register
+    // 请求方式: post
+    // 参数:
+    // username: 用户名
+    // password: 密码
+    // ```
+    register(username, password) {
+        return service.post('/users/register', {
+            username,
+            password
         })
     },
-    getCollection(page = 1) {
-        return service.get(`/collection/list`, {
-            params: { page }
-        })
-    },
-    getRegister({ nickname, password, verify }) {
-        return service.req('/register', {
-            nickname,
-            password,
-            verify,
+    // ### 加入购物车
+
+    // ``` js
+    // http://localhost:9999/goods/addCart
+    // 请求方式: post
+    // 参数:
+    // productId: 商品id
+    // ```
+    addCart(productId) {
+        return service.post('/goods/addCart', {
+            productId,
 
         })
     },
+    // ### 查询购物车
 
-    getLogin({ nickname, password, verify }) {
-        return service.req('/login', {
-            nickname,
-            password,
-            verify
-        })
+    // ``` js
+    // http://localhost:9999/goods/getCarts
+    // ```
+    getCarts() {
+        return service.get('/goods/getCarts')
+    },
+    // ### 删除购物车的商品
+
+    // ``` js
+    // http://localhost:9999/goods/delCart
+    // 请求方式: post
+    // 参数
+    // 1.productId: 商品_id
+    // ```
+    delCart(productId) {
+        return service.post('/goods/delCart', { productId })
     },
 
-    codeMsg({ phone }) {
-        return service.req('/sendCodeMsg', {
-            phone
-        })
-    },
 
-    getMyOrder() {
-        return service.req(`/myOrder`)
-    },
+    // ### 修改购物车数量
 
-    alreadyEvaluated(page = 1) {
-        return service.get('/alreadyEvaluated', {
-            params: { page }
-        })
+    // ``` js
+    // http://localhost:9999/goods/editCart
+    // 请求方式: post
+    // 参数
+    // 1.productId: 商品_id
+    // 2.count: 数量
+    // ```
+    editCart(productId, count) {
+        return service.post('/goods/editCart', { productId, count })
     },
+    // ### 获取全部收获地址
 
-    tobeEvaluated(page = 1) {
-        return service.get('/tobeEvaluated', {
-            params: { page }
-        })
+    // ``` js
+    // http://localhost:9999/address/list
+    // ```
+    list() {
+        return service.get('/address/list')
     },
+    // ### 添加收获地址
 
-    evaluateOne(_id) {
-        return service.req('/evaluateOne', {
-            _id
-        })
-    }
+    // ``` js
+    // http://localhost:9999/address/addAddress
+    // 请求方式: post
+    // 参数:
+    // 1.username: 用户名
+    // 2.phone: 电话
+    // 3.address: 地址
+    // 4.isDefault: 是否为默认地址
+    // ```
+    addAddress(username, phone, address, isDefault) {
+        return service.post('/address/addAddress', { username, phone, address, isDefault })
+    },
+    // ### 设置默认地址
+
+    // ``` js
+    // http://localhost:9999/address/setDefault
+    // 请求方式: post
+    // 参数:
+    // 1.addressId: 地址的_id
+    // ```
+    setDefault(addressId) {
+        return service.post('/address/setDefault', { addressId })
+    },
+    // ### 修改地址
+
+    // ``` js
+    // http://localhost:9999/address/editAddress
+    // 请求方式: post
+    // 参数:
+    // 1.addressId: 地址的_id
+    // 2.username: 用户名
+    // 3.phone: 电话
+    // 4.address: 地址
+    // 5.isDefault: 是否为默认地址
+    // ```
+    editAddress(addressId, username, phone, address, isDefault) {
+        return service.post('/address/editAddress', { addressId, username, phone, address, isDefault })
+    },
+    // ### 删除地址
+
+    // ``` js
+    // http://localhost:9999/address/deleteAddress
+    // 请求方式: post
+    // 参数:
+    // addressId: 地址的_id
+    deleteAddress(addressId) {
+        return service.post('/address/deleteAddress', { addressId })
+    },
 }
